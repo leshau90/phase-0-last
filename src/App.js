@@ -3,8 +3,10 @@ import React, { useState, useContext } from 'react';
 import './App.css';
 import {createContext} from 'react';
 
+
 const initData =  createContext(require('./filtered.json'));
 // var max = 0;
+// let lengthX = Object.keys(initData).length;
 
 
 const Hint = ()=>{
@@ -46,6 +48,7 @@ function chooseAWord(initData) {
 }
 
 function checkIfItContain(question, answer) {
+  answer = answer.toLowerCase();
   let p = answer.split('');
   // console.log('input =>',p);
   for (let i = 0; i < question.length; i++) {
@@ -70,7 +73,7 @@ function checkIfItContain(question, answer) {
 const Game =  props => {
   const initState = useContext(initData);
 
-  const [question, setQuestion] = useState(chooseAWord(initState));
+  const [question, setQuestion] = useState(()=>chooseAWord(initState));
   const [score, setScore] = useState(0);
   const [tracker, setTrack] = useState([]);
   const [answer, setAnswer] = useState('');
@@ -84,8 +87,9 @@ const Game =  props => {
   }
 
   function pressEnter(e) {
+    console.log(e.target.value);
     if (e.key == "Enter") {
-      // console.log(e);
+      
       if (answer == '') return;
       if (answer.length < 4) {
         setStatusG('the answer contain 4 letter at minimum');
@@ -95,7 +99,7 @@ const Game =  props => {
         setStatusG('the answer should not contain more letter than the question');
         return;
       }
-      if(!initState[answer] ){
+      if(!initState[answer.toLowerCase()] ){
         setStatusG('that word is not in dictionary');
         return;
       }
@@ -120,14 +124,14 @@ const Game =  props => {
     }
   }
 
-  function setHelp (x){
-    setAnswer(x);
-    if(answer.length==0){
-      setStatusG("write down your answer below, then press ENTER");
-    } else if(answer.length==0){
-      setStatusG("press ENTER, to have your answer checked");
-    }
-  }
+  // function setHelp (x){
+  //   setAnswer(x);
+  //   if(answer.length==0){
+  //     setStatusG("write down your answer below, then press ENTER");
+  //   } else if(answer.length==0){
+  //     setStatusG("press ENTER, to have your answer checked");
+  //   }
+  // }
   // yes https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif
   // nono https://media.giphy.com/media/l1J9COnlFRcnkIn8Q/giphy.gif
   // setQuestion('TEST');
@@ -138,7 +142,7 @@ const Game =  props => {
       <p>find word that contain these letters: </p>
       <p className="question">{question}</p>
       <p className="helper">{gameStatus}</p>      
-      <input type= 'text' value={answer} onChange={e=>setHelp(e.target.value)} onKeyPress={pressEnter}></input>
+      <input type= 'text' value={answer} onChange={e=>setAnswer(e.target.value)} onKeyPress={pressEnter}></input>
 
       <p>your score : {score} </p>
       <button onClick={()=> setQuestion(newGame())}>let me try another one</button>
@@ -159,14 +163,15 @@ const Answer = props => {
 const App = props=> {
    
   const initState = useContext(initData);
-  let max = Object.keys(initState).length;
+  const [wordCount] = useState(()=>Object.keys(initState).length);
+  
 
 
     return (
       <div className="App">
         <header className="App-header">
         
-        <p>{max} words </p>          
+        <p>{wordCount} words </p>          
         <Game />
         {/* <img src={logo} className="App-logo" alt="logo" />           */}
          </header>
