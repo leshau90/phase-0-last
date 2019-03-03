@@ -48,7 +48,7 @@ function chooseAWord(initData) {
 }
 
 function checkIfItContain(question, answer) {
-  answer = answer.toLowerCase();
+  // answer = answer.toLowerCase();
   let p = answer.split('');
   // console.log('input =>',p);
   for (let i = 0; i < question.length; i++) {
@@ -71,9 +71,9 @@ function checkIfItContain(question, answer) {
 
 
 const Game =  props => {
-  const initState = useContext(initData);
+  const dictionary = useContext(initData);
 
-  const [question, setQuestion] = useState(()=>chooseAWord(initState));
+  const [question, setQuestion] = useState(()=>chooseAWord(dictionary));
   const [score, setScore] = useState(0);
   const [tracker, setTrack] = useState([]);
   const [answer, setAnswer] = useState('');
@@ -83,7 +83,7 @@ const Game =  props => {
     setTrack([]);
     setAnswer('');
     setScore(0);
-    return chooseAWord(initState);
+    return chooseAWord(dictionary);
   }
 
   function pressEnter(e) {
@@ -99,20 +99,21 @@ const Game =  props => {
         setStatusG('the answer should not contain more letter than the question');
         return;
       }
-      if(!initState[answer.toLowerCase()] ){
+      let lowerCaseAnswer= answer.toLowerCase();
+      if(!dictionary[lowerCaseAnswer] ){
         setStatusG('that word is not in dictionary');
         return;
       }
       // console.log('checking for these:', question,answer);
-      if (checkIfItContain(question, answer)) {
+      if (checkIfItContain(question, lowerCaseAnswer)) {
         if (tracker.length == 0 ) {
-          setTrack([answer]);
+          setTrack([lowerCaseAnswer]);
           setAnswer('');
-          setScore(score + initState[answer]);
+          setScore(score + dictionary[lowerCaseAnswer]);
           setStatusG("you found the first one... can you find the next one?");
-        } else if (!tracker.includes(answer)) {
-          setTrack([...tracker, answer]);
-          setScore(score + initState[answer]);
+        } else if (!tracker.includes(lowerCaseAnswer)) {
+          setTrack([...tracker, lowerCaseAnswer]);
+          setScore(score + dictionary[lowerCaseAnswer]);
           setAnswer('');
           setStatusG("you found the next one... can you find the other?");
         } else {
@@ -156,7 +157,8 @@ const Answer = props => {
   return (
     <div>
       <h3>these are what you've answered</h3>
-      {props.track.map((x,i)=>(<p className="answered">{x}</p>))}
+      <p className="answered"> {props.track.map((x,i)=>(<span>{x} </span>))}
+      </p>
     </div>
   )
 }
@@ -165,12 +167,10 @@ const App = props=> {
   const initState = useContext(initData);
   const [wordCount] = useState(()=>Object.keys(initState).length);
   
-
-
     return (
       <div className="App">
         <header className="App-header">
-        
+   
         <p>{wordCount} words </p>          
         <Game />
         {/* <img src={logo} className="App-logo" alt="logo" />           */}
