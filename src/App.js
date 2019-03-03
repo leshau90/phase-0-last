@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import logo from './logo.svg';
+// import logo from './logo.svg';
 import './App.css';
 import {createContext} from 'react';
 
@@ -112,7 +112,7 @@ const Game =  props => {
           setAnswer('');
           setStatusG("you found the next one... can you find the other?");
         } else {
-          setStatusG("you've guessed that one... so no sscore");
+          setStatusG("you've guessed that one... so no score");
         }
       } else {
         setStatusG("the word you've written, has a character or more that aren't in question characters ");
